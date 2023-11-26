@@ -19,6 +19,8 @@ permissions:
 jobs:
   deploy-pages:
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./2023.1.devops-pre-hackathon
 
     steps:
       - name: Checkout repository
@@ -30,9 +32,11 @@ jobs:
           node-version: 16.x
 
       - name: Install dependencies
+        working-directory: ${{env.working-directory}}
         run: npm install
 
       - name: Build the application
+        working-directory: ${{env.working-directory}}
         run: npm run build
 
       - name: Setup Pages
