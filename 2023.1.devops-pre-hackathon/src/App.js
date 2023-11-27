@@ -7,7 +7,10 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          DevOps Básico IT Talent - Mudanças aula 26-04-2023
+          DevOps Básico IT Talent - Atividade CI/CD 1
+        </p>
+        <p>
+          <b>Discente</b>: Gabriel Lins
         </p>
         <a
           className="App-link"
