@@ -1,23 +1,52 @@
 name: CD-PAGES
 
 on:
-  # Chama o fluxo de trabalho tanto em pushs quanto em pull requests para a branch main
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-  # Permite a execução do fluxo de trabalho manualmente através da aba "Actions"
   workflow_dispatch:
 
-# permissions são necessárias para uso com o GH Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
 jobs:
-  deploy-pages:
+  test-and-sonar:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./2023.1.devops-pre-hackathon
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Install dependencies
+        working-directory: ${{env.working-directory}}
+        run: npm install
+
+      - name: Run the tests
+        working-directory: ${{env.working-directory}}
+        run: npm run test -- --coverage
+        env:
+          CI: true
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build-and-deploy:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
       working-directory: ./2023.1.devops-pre-hackathon
